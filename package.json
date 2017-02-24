@@ -1,0 +1,9 @@
+{
+  "name": "drewbot",
+  "version": "1.0.0",
+  "description": "Drew as a service.",
+  "main": "index.js",
+  "repository": "git@github.com:yosmotic/drewbot.git",
+  "author": "Devin Brown <devin.g.brown@gmail.com>",
+  "license": "MIT"
+}
