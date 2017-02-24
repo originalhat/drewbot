@@ -1,12 +1,14 @@
-console.log('==============');
-console.log('= I am Drew. =');
-console.log('==============');
+#! /usr/bin/env node
 
-var prompt = require('prompt');
+var prompt  = require('prompt');
 var request = require('request');
-var colors = require("colors/safe");
+var colors  = require("colors/safe");
+var progressBar = require('progress');
 
 var STATIC_QUALIFIERS = ['exit', 'quit', 'help'];
+
+prompt.message = colors.rainbow("DREWBOT ");
+prompt.delimiter = '';
 
 function createStory(name, description) {
   request({
@@ -51,7 +53,9 @@ function analyzeStaticQualifier(qualifier) {
       process.exit();
       break;
     case 'help':
-      console.log('\n DrewBot Field Guide');
+      console.log('\n Static qualifiers: ['+ STATIC_QUALIFIERS.join(" ") +']');
+
+      console.log('\n DrewBot Protoface Usage Guide');
 
       console.log('\n ➡ Create a story:\n');
       console.log('  create - {"action": "create", "name": "New story", "description": "I am DrewBot"}');
@@ -65,8 +69,9 @@ function analyzeStaticQualifier(qualifier) {
   neuralLoop();
 }
 
-function analyzeDynamicQualifier(qualifier) {
+function analyzeVisualQualifier(qualifier) {
   try {
+
     var synapticResponse = JSON.parse(qualifier);
 
     switch (synapticResponse.action) {
@@ -78,7 +83,7 @@ function analyzeDynamicQualifier(qualifier) {
         break;
     }
   } catch (e) {
-    console.log(e);
+    console.log('DrewBot is confused. DrewBot does not understand you.');
     neuralLoop();
   }
 }
@@ -88,13 +93,41 @@ function neuralLoop() {
     if (STATIC_QUALIFIERS.indexOf(result.$) > -1) {
       analyzeStaticQualifier(result.$);
     } else {
-      analyzeDynamicQualifier(result.$);
+      analyzeVisualQualifier(result.$);
     }
   });
 }
 
-prompt.message = colors.rainbow("DREWBOT ");
-prompt.delimiter = colors.green("");
-prompt.start();
+function wakeFromDream() {
+  console.log('🤖  Initializing DrewBot Core Module...')
 
-neuralLoop();
+  var bar = new progressBar(':bar :percent', { total: 100 });
+  var timer = setInterval(function () {
+    bar.tick();
+    if (bar.complete) {
+      clearInterval(timer);
+
+      bar = new progressBar(':bar :percent', { total: 100 });
+      console.log('🤖  Initializing DrewBot Static Qualifiers...');
+      timer = setInterval(function () {
+        bar.tick();
+        if (bar.complete) {
+          clearInterval(timer);
+          console.log('🤖  Initializing DrewBot Dynamic Qualifiers...');
+          bar = new progressBar(':bar :percent', { total: 100 });
+          timer = setInterval(function () {
+            bar.tick();
+            if (bar.complete) {
+              clearInterval(timer);
+              console.log('🤖  DrewBot 5000 is operational!\n');
+              prompt.start();
+              neuralLoop();
+            }
+          }, 10);
+        }
+      }, 10);
+    }
+  }, 10);
+}
+
+wakeFromDream();
