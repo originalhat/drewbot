@@ -4,6 +4,7 @@ console.log('==============');
 
 var prompt = require('prompt');
 var request = require('request');
+var colors = require("colors/safe");
 
 function createStory(name, description) {
   request({
@@ -19,10 +20,26 @@ function createStory(name, description) {
     json: true,
     method: 'post'
   }, function (error, response, body) {
-    console.log(body, null, 2);
-
+    console.log(body);
     neuralLoop();
   });
+}
+
+function deleteStory(storyId) {
+  request({
+    url: 'https://www.pivotaltracker.com/services/v5/projects/1937481/stories/' + storyId,
+    headers: {
+      'X-TrackerToken': process.env.TRACKER_TOKEN,
+    },
+    method: 'delete'
+  }, function(error, response, body) {
+    if (response.statusCode) {
+      console.log('Story deleted successfully.');
+    } else {
+      console.log(error);
+    }
+    neuralLoop();
+  })
 }
 
 function neuralLoop() {
@@ -39,7 +56,7 @@ function neuralLoop() {
           createStory(synapticResponse.name, synapticResponse.description);
           break;
         case 'delete':
-          console.log('delete');
+          deleteStory(synapticResponse.storyId);
           break;
       }
     } catch (e) {
@@ -49,5 +66,8 @@ function neuralLoop() {
   });
 }
 
+prompt.message = colors.rainbow("DREWBOT ");
+prompt.delimiter = colors.green("");
 prompt.start();
+
 neuralLoop();
