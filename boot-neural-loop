@@ -108,12 +108,12 @@ function wakeFromDream() {
       clearInterval(timer);
 
       bar = new progressBar(':bar :percent', { total: 100 });
-      console.log('🤖  Initializing DrewBot Static Qualifiers...');
+      console.log('🤖  Reticulating Splines...');
       timer = setInterval(function () {
         bar.tick();
         if (bar.complete) {
           clearInterval(timer);
-          console.log('🤖  Initializing DrewBot Dynamic Qualifiers...');
+          console.log('🤖  Linking dependency learning network...');
           bar = new progressBar(':bar :percent', { total: 100 });
           timer = setInterval(function () {
             bar.tick();
