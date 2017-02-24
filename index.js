@@ -6,6 +6,8 @@ var prompt = require('prompt');
 var request = require('request');
 var colors = require("colors/safe");
 
+var STATIC_QUALIFIERS = ['exit', 'quit', 'help'];
+
 function createStory(name, description) {
   request({
     url: 'https://www.pivotaltracker.com/services/v5/projects/1937481/stories',
@@ -25,9 +27,9 @@ function createStory(name, description) {
   });
 }
 
-function deleteStory(storyId) {
+function deleteStory(storyID) {
   request({
-    url: 'https://www.pivotaltracker.com/services/v5/projects/1937481/stories/' + storyId,
+    url: 'https://www.pivotaltracker.com/services/v5/projects/1937481/stories/' + storyID,
     headers: {
       'X-TrackerToken': process.env.TRACKER_TOKEN,
     },
@@ -42,26 +44,51 @@ function deleteStory(storyId) {
   })
 }
 
+function analyzeStaticQualifier(qualifier) {
+  switch (qualifier) {
+    case 'exit':
+    case 'quit':
+      process.exit();
+      break;
+    case 'help':
+      console.log('\n DrewBot Field Guide');
+
+      console.log('\n ➡ Create a story:\n');
+      console.log('  create - {"action": "create", "name": "New story", "description": "I am DrewBot"}');
+
+      console.log('\n ➡ Delete a story:\n');
+      console.log('  delete - {"action": "delete", "storyID": "1234"}');
+
+      console.log('\n')
+      break;
+  }
+  neuralLoop();
+}
+
+function analyzeDynamicQualifier(qualifier) {
+  try {
+    var synapticResponse = JSON.parse(qualifier);
+
+    switch (synapticResponse.action) {
+      case 'create':
+        createStory(synapticResponse.name, synapticResponse.description);
+        break;
+      case 'delete':
+        deleteStory(synapticResponse.storyID);
+        break;
+    }
+  } catch (e) {
+    console.log(e);
+    neuralLoop();
+  }
+}
+
 function neuralLoop() {
   prompt.get(['$'], function (err, result) {
-    if (result.$ === 'exit') {
-      process.exit();
-    }
-
-    try {
-      var synapticResponse = JSON.parse(result.$);
-
-      switch (synapticResponse.action) {
-        case 'create':
-          createStory(synapticResponse.name, synapticResponse.description);
-          break;
-        case 'delete':
-          deleteStory(synapticResponse.storyId);
-          break;
-      }
-    } catch (e) {
-      console.log(e);
-      neuralLoop();
+    if (STATIC_QUALIFIERS.indexOf(result.$) > -1) {
+      analyzeStaticQualifier(result.$);
+    } else {
+      analyzeDynamicQualifier(result.$);
     }
   });
 }
