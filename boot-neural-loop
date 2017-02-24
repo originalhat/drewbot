@@ -50,6 +50,7 @@ function analyzeStaticQualifier(qualifier) {
   switch (qualifier) {
     case 'exit':
     case 'quit':
+      console.log('Time for DrewBot to go to bed.');
       process.exit();
       break;
     case 'help':
