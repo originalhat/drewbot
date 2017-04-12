@@ -9,6 +9,6 @@ export TRACKER_TOKEN=<your-token>
 ```
 
 ```
-node index.js
+./boot-neural-loop
 ```
 
